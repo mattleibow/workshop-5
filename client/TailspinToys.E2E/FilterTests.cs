@@ -24,9 +24,10 @@ public class FilterTests : PlaywrightTestBase
     [Fact]
     public async Task ShouldFilterGamesByCategory()
     {
-        // Navigate to homepage and wait for games to load
+        // Navigate to homepage and wait for games and filter options to load
         await Page.GotoAsync("/");
         await Page.WaitForSelectorAsync("[data-testid='games-grid']", new() { Timeout = 15000 });
+        await WaitForFilterOptionsAsync();
 
         // Verify categories dropdown loaded real options
         var categorySelect = Page.GetByTestId("filter-category");
@@ -59,9 +60,10 @@ public class FilterTests : PlaywrightTestBase
     [Fact]
     public async Task ShouldFilterGamesByPublisher()
     {
-        // Navigate to homepage and wait for games to load
+        // Navigate to homepage and wait for games and filter options to load
         await Page.GotoAsync("/");
         await Page.WaitForSelectorAsync("[data-testid='games-grid']", new() { Timeout = 15000 });
+        await WaitForFilterOptionsAsync();
 
         // Verify publishers dropdown loaded real options
         var publisherSelect = Page.GetByTestId("filter-publisher");
@@ -90,9 +92,10 @@ public class FilterTests : PlaywrightTestBase
     [Fact]
     public async Task ShouldFilterGamesByCategoryAndPublisherCombined()
     {
-        // Navigate to homepage and wait for games to load
+        // Navigate to homepage and wait for games and filter options to load
         await Page.GotoAsync("/");
         await Page.WaitForSelectorAsync("[data-testid='games-grid']", new() { Timeout = 15000 });
+        await WaitForFilterOptionsAsync();
 
         var categorySelect = Page.GetByTestId("filter-category");
         var publisherSelect = Page.GetByTestId("filter-publisher");
@@ -134,9 +137,10 @@ public class FilterTests : PlaywrightTestBase
     [Fact]
     public async Task ShouldShowClearButtonOnlyWhenFilterIsActive()
     {
-        // Navigate to homepage and wait for games to load
+        // Navigate to homepage and wait for games and filter options to load
         await Page.GotoAsync("/");
         await Page.WaitForSelectorAsync("[data-testid='games-grid']", new() { Timeout = 15000 });
+        await WaitForFilterOptionsAsync();
 
         // Clear button should not be visible with no filters
         await Expect(Page.GetByTestId("filter-clear-button")).Not.ToBeVisibleAsync();
@@ -153,9 +157,10 @@ public class FilterTests : PlaywrightTestBase
     [Fact]
     public async Task ShouldClearFiltersAndRestoreAllGames()
     {
-        // Navigate to homepage and wait for games to load
+        // Navigate to homepage and wait for games and filter options to load
         await Page.GotoAsync("/");
         await Page.WaitForSelectorAsync("[data-testid='games-grid']", new() { Timeout = 15000 });
+        await WaitForFilterOptionsAsync();
 
         // Record initial full count
         var initialCount = await Page.GetByTestId("game-card").CountAsync();
@@ -201,6 +206,17 @@ public class FilterTests : PlaywrightTestBase
 
         await publisherSelect.FocusAsync();
         await Expect(publisherSelect).ToBeFocusedAsync();
+    }
+
+    /// <summary>
+    /// Waits for the Blazor interactive circuit to connect and populate filter dropdown options.
+    /// The filter panel uses @rendermode InteractiveServer, so options are loaded asynchronously
+    /// after the SignalR circuit connects — waiting for games-grid alone is not sufficient.
+    /// </summary>
+    private async Task WaitForFilterOptionsAsync()
+    {
+        await Expect(Page.GetByTestId("filter-category").Locator("option").Nth(1))
+            .ToBeAttachedAsync(new() { Timeout = 15000 });
     }
 
     private static ILocatorAssertions Expect(ILocator locator) => Assertions.Expect(locator);

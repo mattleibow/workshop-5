@@ -8,19 +8,19 @@
         <div class="relative z-10">
             <h3 data-testid="game-title" class="text-xl font-semibold text-slate-100 mb-2 group-hover:text-blue-400 transition-colors">@Game.Title</h3>
 
-            @if (!string.IsNullOrWhiteSpace(Game.CategoryName) || !string.IsNullOrWhiteSpace(Game.PublisherName))
+            @if (Game.Category is not null || Game.Publisher is not null)
             {
                 <div class="flex gap-2 mb-3">
-                    @if (!string.IsNullOrWhiteSpace(Game.CategoryName))
+                    @if (Game.Category is not null)
                     {
                         <span class="text-xs font-medium px-2.5 py-0.5 rounded bg-blue-900/60 text-blue-300" data-testid="game-category">
-                            @Game.CategoryName
+                            @Game.Category.Name
                         </span>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Game.PublisherName))
+                    @if (Game.Publisher is not null)
                     {
                         <span class="text-xs font-medium px-2.5 py-0.5 rounded bg-purple-900/60 text-purple-300" data-testid="game-publisher">
-                            @Game.PublisherName
+                            @Game.Publisher.Name
                         </span>
                     }
                 </div>
