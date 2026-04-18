@@ -1,0 +1,113 @@
+@* GameFilterPanel.razor
+   A filter panel component that provides category and publisher dropdowns for
+   filtering the game list. Emits events when selections change so the parent
+   component can re-fetch data. *@
+
+@rendermode InteractiveServer
+@inject IHttpClientFactory HttpClientFactory
+@using TailspinToys.Web.Models
+
+<div data-testid="game-filter-panel" class="flex flex-wrap gap-4 mb-6 items-end">
+
+    <div class="flex flex-col gap-1">
+        <label for="filter-category" class="text-sm font-medium text-slate-300">Category</label>
+        <select id="filter-category"
+                data-testid="filter-category"
+                value="@SelectedCategoryId"
+                @onchange="OnCategoryChanged"
+                aria-label="Filter games by category"
+                class="bg-slate-700 border border-slate-600 text-slate-100 text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-w-[160px]">
+            <option value="0">All Categories</option>
+            @foreach (var category in categories)
+            {
+                <option value="@category.Id">@category.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="flex flex-col gap-1">
+        <label for="filter-publisher" class="text-sm font-medium text-slate-300">Publisher</label>
+        <select id="filter-publisher"
+                data-testid="filter-publisher"
+                value="@SelectedPublisherId"
+                @onchange="OnPublisherChanged"
+                aria-label="Filter games by publisher"
+                class="bg-slate-700 border border-slate-600 text-slate-100 text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-w-[160px]">
+            <option value="0">All Publishers</option>
+            @foreach (var publisher in publishers)
+            {
+                <option value="@publisher.Id">@publisher.Name</option>
+            }
+        </select>
+    </div>
+
+    @if (SelectedCategoryId != 0 || SelectedPublisherId != 0)
+    {
+        <button data-testid="filter-clear-button"
+                @onclick="ClearFilters"
+                aria-label="Clear all filters"
+                class="px-4 py-2 bg-slate-600 hover:bg-slate-500 text-slate-100 text-sm rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 self-end">
+            Clear Filters
+        </button>
+    }
+
+</div>
+
+@code {
+    /// <summary>Currently selected category ID. 0 means no filter.</summary>
+    [Parameter]
+    public int SelectedCategoryId { get; set; }
+
+    /// <summary>Currently selected publisher ID. 0 means no filter.</summary>
+    [Parameter]
+    public int SelectedPublisherId { get; set; }
+
+    /// <summary>Raised when the category selection changes, providing the new category ID (0 = all).</summary>
+    [Parameter]
+    public EventCallback<int> SelectedCategoryIdChanged { get; set; }
+
+    /// <summary>Raised when the publisher selection changes, providing the new publisher ID (0 = all).</summary>
+    [Parameter]
+    public EventCallback<int> SelectedPublisherIdChanged { get; set; }
+
+    /// <summary>Raised when the user clicks Clear Filters, allowing the parent to reset both filters atomically.</summary>
+    [Parameter]
+    public EventCallback OnClearFilters { get; set; }
+
+    private List<Category> categories = [];
+    private List<Publisher> publishers = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var client = HttpClientFactory.CreateClient("API");
+
+        try
+        {
+            categories = await client.GetFromJsonAsync<List<Category>>("api/categories") ?? [];
+            publishers = await client.GetFromJsonAsync<List<Publisher>>("api/publishers") ?? [];
+        }
+        catch
+        {
+            // Silently degrade — filters will be empty but the game list still works
+        }
+    }
+
+    private async Task OnCategoryChanged(ChangeEventArgs e)
+    {
+        var id = int.TryParse(e.Value?.ToString(), out var parsed) ? parsed : 0;
+        await SelectedCategoryIdChanged.InvokeAsync(id);
+    }
+
+    private async Task OnPublisherChanged(ChangeEventArgs e)
+    {
+        var id = int.TryParse(e.Value?.ToString(), out var parsed) ? parsed : 0;
+        await SelectedPublisherIdChanged.InvokeAsync(id);
+    }
+
+    private async Task ClearFilters()
+    {
+        // Invoke a single combined callback so the parent can reset both IDs
+        // and trigger a single re-fetch — avoids two concurrent LoadGames calls.
+        await OnClearFilters.InvokeAsync();
+    }
+}
