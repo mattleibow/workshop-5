@@ -1,0 +1,60 @@
+.DS_Store
+
+# build output
+dist/
+
+# logs
+*.log
+
+# environment variables
+.env
+.env.production
+
+# macOS-specific files
+.DS_Store
+
+# jetbrains setting folder
+.idea/
+
+# dotnet
+*.swp
+*.*~
+project.lock.json
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+msbuild.log
+msbuild.err
+msbuild.wrn
+
+# SQLite
+*.db
+
+# NuGet
+*.nupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+
+# Playwright
+test-results/
+playwright-report/
+*.png
+.playwright-mcp/
+.ai/
+data/*.db-shm
+data/*.db-wal

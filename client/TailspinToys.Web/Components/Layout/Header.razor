@@ -1,0 +1,26 @@
+<script type="module" src="@Assets["Components/Layout/Header.razor.js"]"></script>
+
+<header class="bg-blue-500 dark:bg-blue-700 text-white p-4 shadow-md transition-colors duration-300">
+    <div class="container mx-auto flex justify-between items-center pl-4 pr-4">
+        <div class="flex items-center">
+            <div class="relative group">
+                <button id="menu-toggle"
+                        class="focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-500 rounded mr-4"
+                        aria-label="Toggle menu"
+                        aria-expanded="false"
+                        aria-controls="menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <nav id="menu" class="hidden absolute left-0 mt-2 w-48 bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded shadow-lg z-10 transition-colors duration-300">
+                    <ul class="py-1">
+                        <li><a href="/" class="block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700 text-inherit">Home</a></li>
+                        <li><a href="/about" class="block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700 text-inherit">About</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="text-xl font-bold"><a href="/" class="hover:underline text-white">Tailspin Toys</a></div>
+        </div>
+    </div>
+</header>

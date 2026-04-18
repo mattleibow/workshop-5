@@ -1,0 +1,60 @@
+@rendermode InteractiveServer
+@inject IHttpClientFactory HttpClientFactory
+
+<div>
+    <h2 class="text-2xl font-medium mb-6 text-slate-100">Featured Games</h2>
+
+    @if (isLoading)
+    {
+        <LoadingSkeleton />
+    }
+    else if (errorMessage is not null)
+    {
+        <ErrorMessage Message="@errorMessage" />
+    }
+    else if (games is null || games.Length == 0)
+    {
+        <EmptyState />
+    }
+    else
+    {
+        <div data-testid="games-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach (var game in games)
+            {
+                <GameCard Game="game" />
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private Game[]? games;
+    private bool isLoading = true;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var client = HttpClientFactory.CreateClient("API");
+            var response = await client.GetAsync("api/games");
+
+            if (response.IsSuccessStatusCode)
+            {
+                games = await response.Content.ReadFromJsonAsync<Game[]>();
+            }
+            else
+            {
+                errorMessage = $"Failed to fetch data: {(int)response.StatusCode} {response.ReasonPhrase}";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

@@ -1,0 +1,9 @@
+# Exclude the workshop exercises from Copilot's context so it doesn't read
+# exercise answers when generating code for the Tailspin Toys application.
+# This ensures Copilot relies on the custom instructions and project code
+# rather than the workshop step-by-step guides.
+#
+# Learn more about .copilotignore:
+# https://learn.microsoft.com/en-us/copilot/managing-copilot-for-your-enterprise/managing-policies-and-features-for-copilot-for-your-enterprise#excluding-files-from-github-copilot
+# https://docs.github.com/copilot/managing-copilot/managing-github-copilot-in-your-organization/setting-up-github-copilot-extensions/managing-github-copilot-extensions-in-your-organization
+- workshop/**/*

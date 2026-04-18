@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LSC44NDPLQ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-LSC44NDPLQ');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Copilot CLI &amp; Agentic Workflows Workshop</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="alternate" hreflang="en" href="https://mattleibow.github.io/tailspin-toys-workshop-dotnet/">
+    <link rel="alternate" hreflang="x-default" href="https://mattleibow.github.io/tailspin-toys-workshop-dotnet/">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="light-theme.css">
+    <script src="theme-toggle.js"></script>
+</head>
+<body>
+    <div style="position:fixed;top:1rem;right:1rem;z-index:1000;display:flex;gap:0.5rem;align-items:center;">
+        <button class="theme-toggle" onclick="toggleTheme()">☀️ Light</button>
+    </div>
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">💻 Terminal + AI-Powered Development</div>
+            <h1>GitHub Copilot CLI &amp; Agentic Workflows Workshop</h1>
+            <p class="hero-subtitle">Master GitHub Copilot in the terminal. Build features with custom instructions, MCP servers, and custom agents — then automate your repo with agentic workflows and ChatOps. A hands-on workshop with the Tailspin Toys project.</p>
+            <div class="hero-cta">
+                <a href="step.html?step=readme" class="btn btn-primary">🚀 Start Workshop</a>
+                <a href="https://github.com/mattleibow/tailspin-toys-workshop-dotnet" class="btn btn-secondary" target="_blank">⭐ GitHub Repo</a>
+            </div>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value">~155min</div>
+                    <div class="stat-label">Duration</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">13</div>
+                    <div class="stat-label">Exercises</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">2</div>
+                    <div class="stat-label">Parts</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">What You'll Learn</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h3>Custom Instructions</h3>
+                    <p>Configure Copilot with project-specific context files for more accurate, relevant code generation.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔌</div>
+                    <h3>MCP Servers</h3>
+                    <p>Extend Copilot's capabilities with Model Context Protocol servers for enhanced tool integration.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>Custom Agents</h3>
+                    <p>Build specialized agents with custom prompts and skills tailored to your workflow.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Agent Skills</h3>
+                    <p>Create reusable skill definitions that give agents domain-specific expertise.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Agentic Workflows</h3>
+                    <p>Write natural-language workflows that run as GitHub Actions — scheduled digests and automated tasks.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>ChatOps Commands</h3>
+                    <p>Trigger workflows from issue comments with slash commands — no context-switching required.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="workshop">
+        <div class="container">
+            <h2 class="section-title">Workshop Parts</h2>
+            <div class="parts-list">
+                <a href="step.html?step=readme" class="part-card">
+                    <div class="part-number">📚</div>
+                    <div class="part-content">
+                        <h3>Workshop Overview</h3>
+                        <p>Introduction and learning objectives</p>
+                    </div>
+                    <span class="part-time">5 min</span>
+                </a>
+
+                <h3 style="width:100%;color:var(--text-secondary,#94a3b8);font-size:0.9rem;text-transform:uppercase;letter-spacing:0.05em;margin:1.5rem 0 0.5rem;padding-left:0.5rem;">Part 1: Building with Copilot CLI</h3>
+
+                <a href="step.html?step=00-prereqs" class="part-card">
+                    <div class="part-number">00</div>
+                    <div class="part-content">
+                        <h3>Prerequisites</h3>
+                        <p>Set up your environment</p>
+                    </div>
+                    <span class="part-time">15 min</span>
+                </a>
+                <a href="step.html?step=01-install-copilot-cli" class="part-card">
+                    <div class="part-number">01</div>
+                    <div class="part-content">
+                        <h3>Install Copilot CLI</h3>
+                        <p>Set up GitHub Copilot in the terminal</p>
+                    </div>
+                    <span class="part-time">10 min</span>
+                </a>
+                <a href="step.html?step=02-custom-instructions" class="part-card">
+                    <div class="part-number">02</div>
+                    <div class="part-content">
+                        <h3>Custom Instructions</h3>
+                        <p>Provide context to Copilot with instruction files</p>
+                    </div>
+                    <span class="part-time">10 min</span>
+                </a>
+                <a href="step.html?step=03-mcp" class="part-card">
+                    <div class="part-number">03</div>
+                    <div class="part-content">
+                        <h3>MCP Servers</h3>
+                        <p>Use MCP servers with Copilot CLI</p>
+                    </div>
+                    <span class="part-time">10 min</span>
+                </a>
+                <a href="step.html?step=04-generating-code" class="part-card">
+                    <div class="part-number">04</div>
+                    <div class="part-content">
+                        <h3>Generating Code</h3>
+                        <p>Add features with Copilot CLI</p>
+                    </div>
+                    <span class="part-time">15 min</span>
+                </a>
+                <a href="step.html?step=05-agent-skills" class="part-card">
+                    <div class="part-number">05</div>
+                    <div class="part-content">
+                        <h3>Agent Skills</h3>
+                        <p>Use agent skills for specialized tasks</p>
+                    </div>
+                    <span class="part-time">10 min</span>
+                </a>
+                <a href="step.html?step=06-custom-agents" class="part-card">
+                    <div class="part-number">06</div>
+                    <div class="part-content">
+                        <h3>Custom Agents</h3>
+                        <p>Create custom agent definitions</p>
+                    </div>
+                    <span class="part-time">10 min</span>
+                </a>
+                <a href="step.html?step=07-slash-commands" class="part-card">
+                    <div class="part-number">07</div>
+                    <div class="part-content">
+                        <h3>Slash Commands</h3>
+                        <p>Use slash commands in Copilot CLI</p>
+                    </div>
+                    <span class="part-time">10 min</span>
+                </a>
+
+                <h3 style="width:100%;color:var(--text-secondary,#94a3b8);font-size:0.9rem;text-transform:uppercase;letter-spacing:0.05em;margin:1.5rem 0 0.5rem;padding-left:0.5rem;">Part 2: Automating with Agentic Workflows</h3>
+
+                <a href="step.html?step=08-agentic-workflows" class="part-card">
+                    <div class="part-number">08</div>
+                    <div class="part-content">
+                        <h3>Agentic Workflows Setup</h3>
+                        <p>Authenticate GitHub, install gh aw, and configure repo secrets</p>
+                    </div>
+                    <span class="part-time">10 min</span>
+                </a>
+                <a href="step.html?step=09-first-agentic-workflow" class="part-card">
+                    <div class="part-number">09</div>
+                    <div class="part-content">
+                        <h3>First Agentic Workflow</h3>
+                        <p>Initialise gh aw, create a daily digest, open a PR, and run it</p>
+                    </div>
+                    <span class="part-time">15 min</span>
+                </a>
+                <a href="step.html?step=10-chatops-game-lookup" class="part-card">
+                    <div class="part-number">10</div>
+                    <div class="part-content">
+                        <h3>ChatOps: Game Lookup</h3>
+                        <p>/game-lookup slash command via ChatOps pattern</p>
+                    </div>
+                    <span class="part-time">20 min</span>
+                </a>
+                <a href="step.html?step=11-trending-games-digest" class="part-card">
+                    <div class="part-number">11</div>
+                    <div class="part-content">
+                        <h3>Trending Games Digest</h3>
+                        <p>Fetch popular FreeToGame titles on a schedule</p>
+                    </div>
+                    <span class="part-time">20 min</span>
+                </a>
+                <a href="step.html?step=12-review" class="part-card">
+                    <div class="part-number">12</div>
+                    <div class="part-content">
+                        <h3>Review &amp; Next Steps</h3>
+                        <p>Recap and continue your learning</p>
+                    </div>
+                    <span class="part-time">5 min</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="prereqs">
+        <div class="container">
+            <h2 class="section-title">Prerequisites</h2>
+            <div class="prereqs-grid">
+                <div class="prereq-item">
+                    <span class="prereq-check">✓</span>
+                    <span>Terminal / Codespace</span>
+                </div>
+                <div class="prereq-item">
+                    <span class="prereq-check">✓</span>
+                    <span>GitHub Copilot</span>
+                </div>
+                <div class="prereq-item">
+                    <span class="prereq-check">✓</span>
+                    <span>.NET 10 SDK</span>
+                </div>
+                <div class="prereq-item">
+                    <span class="prereq-check">✓</span>
+                    <span>Git &amp; GitHub CLI (gh)</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://github.com/mattleibow/tailspin-toys-workshop-dotnet" target="_blank">GitHub Repository</a>
+                <a href="https://code.visualstudio.com/docs/copilot/overview" target="_blank">Copilot Docs</a>
+                <a href="https://github.com/github/awesome-copilot" target="_blank">Awesome Copilot</a>
+            </div>
+            <p class="footer-credit">Built with 💜 by the GitHub Copilot Team</p>
+        </div>
+    </footer>
+</body>
+</html>

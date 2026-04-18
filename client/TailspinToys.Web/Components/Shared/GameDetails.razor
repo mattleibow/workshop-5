@@ -1,0 +1,145 @@
+@rendermode InteractiveServer
+@inject IHttpClientFactory HttpClientFactory
+
+@if (isLoading)
+{
+    <div class="max-w-3xl mx-auto animate-pulse">
+        <div class="h-10 bg-slate-700 rounded w-2/3 mb-4"></div>
+        <div class="flex gap-2 mb-6">
+            <div class="h-6 bg-slate-700 rounded-full w-24"></div>
+            <div class="h-6 bg-slate-700 rounded-full w-28"></div>
+        </div>
+        <div class="space-y-3">
+            <div class="h-4 bg-slate-700 rounded w-full"></div>
+            <div class="h-4 bg-slate-700 rounded w-5/6"></div>
+            <div class="h-4 bg-slate-700 rounded w-4/6"></div>
+        </div>
+    </div>
+}
+else if (errorMessage is not null)
+{
+    <ErrorMessage Message="@errorMessage" />
+}
+else if (game is not null)
+{
+    <div data-testid="game-details" class="bg-slate-800/70 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden">
+        <div class="p-6">
+            <div class="flex justify-between items-start flex-wrap gap-3">
+                <h1 data-testid="game-details-title" class="text-3xl font-bold text-slate-100 mb-2">@game.Title</h1>
+
+                @if (game.StarRating.HasValue)
+                {
+                    <div class="flex items-center">
+                        <span data-testid="game-rating" class="bg-blue-500/20 text-blue-400 text-sm px-3 py-1 rounded-full">
+                            <span class="text-yellow-400">@GetStarDisplay(game.StarRating.Value)</span>
+                            @game.StarRating.Value.ToString("0.0")
+                        </span>
+                    </div>
+                }
+            </div>
+
+            <div class="flex flex-wrap gap-2 mt-4 mb-6">
+                @if (game.Category is not null)
+                {
+                    <span data-testid="game-details-category" class="text-xs font-medium px-2.5 py-0.5 rounded bg-blue-900/60 text-blue-300">
+                        @game.Category.Name
+                    </span>
+                }
+                @if (game.Publisher is not null)
+                {
+                    <span data-testid="game-details-publisher" class="text-xs font-medium px-2.5 py-0.5 rounded bg-purple-900/60 text-purple-300">
+                        @game.Publisher.Name
+                    </span>
+                }
+            </div>
+
+            <div class="space-y-4 mt-6">
+                <h2 class="text-lg font-semibold text-slate-200 mb-2">About this game</h2>
+                <div class="text-slate-400 space-y-4">
+                    <p data-testid="game-details-description">@game.Description</p>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <button data-testid="back-game-button"
+                        class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 flex justify-center items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                    </svg>
+                    Support This Game
+                </button>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="bg-slate-800/60 backdrop-blur-sm rounded-xl p-6">
+        <p class="text-slate-400">No game information available</p>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Game? Game { get; set; }
+
+    [Parameter, EditorRequired]
+    public int GameId { get; set; }
+
+    private Game? game;
+    private bool isLoading = true;
+    private string? errorMessage;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Game is not null)
+        {
+            game = Game;
+            errorMessage = null;
+            isLoading = false;
+            return;
+        }
+
+        if (GameId <= 0)
+        {
+            game = null;
+            errorMessage = "No game ID provided";
+            isLoading = false;
+            return;
+        }
+
+        isLoading = true;
+        errorMessage = null;
+
+        try
+        {
+            var client = HttpClientFactory.CreateClient("API");
+            var response = await client.GetAsync($"api/games/{GameId}");
+            if (response.IsSuccessStatusCode)
+            {
+                game = await response.Content.ReadFromJsonAsync<Game>();
+            }
+            else
+            {
+                errorMessage = $"Failed to fetch game: {(int)response.StatusCode} {response.ReasonPhrase}";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private string GetStarDisplay(double rating)
+    {
+        int fullStars = (int)Math.Floor(rating);
+        bool halfStar = rating % 1 >= 0.5;
+        int emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+        return new string('★', fullStars) + (halfStar ? "½" : "") + new string('☆', emptyStars);
+    }
+}

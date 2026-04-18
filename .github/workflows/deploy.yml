@@ -1,0 +1,55 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v6
+
+      # Verify .NET solution builds before deploying docs
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Build solution
+        run: dotnet build --configuration Release
+
+      - name: Prepare deployment
+        run: |
+          mkdir -p ./_site
+          cp -r docs/* ./_site/
+          mkdir -p ./_site/workshop
+          cp -r workshop/images ./_site/workshop/
+          src_count=$(find workshop/images -type f | wc -l)
+          dest_count=$(find ./_site/workshop/images -type f | wc -l)
+          [ "$src_count" -gt 0 ] || { echo "No source workshop images found at workshop/images."; exit 1; }
+          [ "$src_count" -eq "$dest_count" ] || { echo "Image copy mismatch: source=$src_count destination=$dest_count."; exit 1; }
+          touch ./_site/.nojekyll
+
+      - uses: actions/configure-pages@v6
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

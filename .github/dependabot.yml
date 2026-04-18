@@ -1,0 +1,25 @@
+# This is the dependabot configuration file that automates dependency updates
+# Updates section configures how dependabot should handle dependency updates:
+# - Monitors NuGet dependencies
+# - Checks for updates weekly
+#
+# Learn more at https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+version: 2
+updates:
+  - package-ecosystem: nuget
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      nuget-minor-patch:
+        update-types:
+          - minor
+          - patch
+  - package-ecosystem: "devcontainers"
+    directory: "/"
+    schedule:
+      interval: weekly
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: weekly

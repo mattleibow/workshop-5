@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/client/">
+    <Project Path="client/TailspinToys.E2E/TailspinToys.E2E.csproj" />
+    <Project Path="client/TailspinToys.Web/TailspinToys.Web.csproj" />
+  </Folder>
+  <Folder Name="/server/">
+    <Project Path="server/TailspinToys.Api/TailspinToys.Api.csproj" />
+    <Project Path="server/TailspinToys.Api.Tests/TailspinToys.Api.Tests.csproj" />
+  </Folder>
+</Solution>
