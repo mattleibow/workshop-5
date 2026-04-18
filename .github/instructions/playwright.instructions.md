@@ -49,10 +49,52 @@ await Expect(Page).ToHaveURLAsync("/game/1");
 ### Important Rules
 
 - **NEVER** use `Task.Delay` or hard-coded waits
+- **NEVER** use `WaitForSelectorAsync` to wait after an interaction — if the element is already in the DOM it returns immediately, causing flaky tests. Use `Expect()` assertions instead (see below).
 - Use descriptive test method names
 - Take screenshots only on failure
 - Use `data-testid` for all interactive elements
 - All test classes should extend `PlaywrightTestBase`
+
+### Waiting After Interactions
+
+After clicking, selecting, or any user interaction, **always wait for the semantic consequence** using auto-retrying `Expect()` assertions. Never use `WaitForSelectorAsync` or `WaitForLoadStateAsync` as a proxy for "loading finished" — if the element is already present they return immediately.
+
+```csharp
+// ✅ Correct — waits for the filter to take effect (auto-retries until true)
+await categorySelect.SelectOptionAsync(new SelectOptionValue { Value = "1" });
+await Expect(Page.GetByTestId("game-category").First).ToContainTextAsync("Strategy");
+
+// ✅ Correct — waits for count to match (auto-retries)
+await Page.GetByTestId("filter-clear-button").ClickAsync();
+await Expect(Page.GetByTestId("game-card")).ToHaveCountAsync(initialCount);
+
+// ❌ Wrong — returns immediately if games-grid is already in the DOM
+await Page.WaitForSelectorAsync("[data-testid='games-grid']");
+```
+
+### Blazor Interactive Server Testing
+
+Components with `@rendermode InteractiveServer` are rendered twice: once by SSR (initial HTML, no event handlers) and again when Blazor's SignalR circuit connects. DOM elements can be present in the page before the circuit is ready, so interacting with them immediately after navigation may have no effect.
+
+**Always wait for the component's `data-interactive="true"` attribute before interacting:**
+
+```csharp
+/// <summary>Waits for the filter panel's Blazor circuit to be connected.</summary>
+private async Task WaitForInteractiveAsync(string testId = "game-filter-panel")
+{
+    await Page.Locator($"[data-testid='{testId}'][data-interactive='true']")
+              .WaitForAsync(new() { Timeout = 15000 });
+}
+```
+
+Call this before any `SelectOptionAsync`, `ClickAsync`, or other interactions on Blazor interactive components:
+
+```csharp
+await Page.GotoAsync("/");
+await WaitForInteractiveAsync("game-filter-panel");
+// Now safe to interact with the filter dropdowns
+await Page.GetByTestId("filter-category").SelectOptionAsync(...);
+```
 
 ### Available Test IDs
 
