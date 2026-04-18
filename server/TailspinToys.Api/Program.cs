@@ -54,6 +54,8 @@ app.UseCors();
 
 // Register routes
 app.MapGamesRoutes();
+app.MapPublishersRoutes();
+app.MapCategoriesRoutes();
 
 app.Run();
 
