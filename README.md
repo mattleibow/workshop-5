@@ -22,6 +22,12 @@ Start with [workshop/00-prereqs.md](./workshop/00-prereqs.md) for the full setup
 
 Or, if just want to run the app...
 
+## Features
+
+- **Game listing** — Browse all crowdfunded games with titles, descriptions, categories, publishers, and star ratings
+- **Game filtering** — Filter the game list by category and/or publisher using the dropdown controls; filters can be combined and cleared with a single button
+- **Game details** — View full details for any game and support it with the "Support This Game" button
+
 ## Launch the site
 
 A script file has been created to launch the site. You can run it by:

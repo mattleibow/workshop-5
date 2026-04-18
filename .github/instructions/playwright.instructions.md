@@ -71,3 +71,7 @@ await Expect(Page).ToHaveURLAsync("/game/1");
 - `back-game-button` - Support This Game button
 - `about-section` - About page section
 - `about-heading` - About page heading
+- `game-filter-panel` - Filter panel container on the games list page
+- `filter-category` - Category filter dropdown (select element)
+- `filter-publisher` - Publisher filter dropdown (select element)
+- `filter-clear-button` - Clear all filters button (visible only when a filter is active)
