@@ -148,7 +148,7 @@ return Results.BadRequest(new { error = "Invalid input" });
 
 **Structure** (`server/TailspinToys.Api.Tests/`)
 - Use xUnit with `WebApplicationFactory<Program>`
-- Use InMemoryDatabase for test isolation
+- Use **file-based SQLite** (not InMemoryDatabase) for route/integration tests — see `dotnet-tests.instructions.md` for the full pattern
 - Define test data as class constants
 - Implement `IDisposable` for cleanup
 
@@ -165,13 +165,19 @@ The project includes comprehensive Playwright E2E tests written in C# with xUnit
 
 **Playwright Patterns**
 - Use role-based locators: `getByRole`, `getByLabel`, `getByText`
-- Use `test.step()` for grouping
-- Auto-retrying assertions: `await expect(locator).toHaveText()`
-- **NEVER** use `waitForTimeout` or hard-coded waits
+- Auto-retrying assertions: `await Expect(locator).ToContainTextAsync("...")`
+- **NEVER** use `Task.Delay`, hard-coded waits, or `WaitForSelectorAsync` after an interaction — use `Expect()` to assert semantic consequences instead
+- For `@rendermode InteractiveServer` components, wait for `data-interactive="true"` before interacting — see `playwright.instructions.md` for the `WaitForInteractiveAsync()` helper
 
 **Testability Requirement**
 - **ALL** interactive elements MUST have `data-testid` attributes
 - Use descriptive IDs: `data-testid="game-card"`
+
+**Client Model Guidelines**
+- Client models live in `client/TailspinToys.Web/Models/`
+- Before writing a client model, check the server model's `ToDict()` method to understand the exact JSON shape
+- Nested API objects (`publisher: {id, name}`) → nested client classes; **never** use flat `[JsonPropertyName("publisher_name")]` properties for relationship data (those keys don't exist in the API response and will always deserialise as `null`)
+- See `.github/instructions/blazor.instructions.md` for the full pattern
 
 ## Development Workflow
 
