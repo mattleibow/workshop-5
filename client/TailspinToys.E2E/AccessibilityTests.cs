@@ -240,6 +240,95 @@ public class AccessibilityTests : PlaywrightTestBase
         }
     }
 
+    [Fact]
+    public async Task HomePageShouldHaveExactlyOneH1WithCorrectContent()
+    {
+        await Page.GotoAsync("/");
+        await Page.WaitForSelectorAsync("[data-testid='games-grid']", new() { Timeout = 10000 });
+
+        // Exactly one <h1> on the home page
+        var h1Elements = Page.Locator("h1");
+        await Expect(h1Elements).ToHaveCountAsync(1);
+        await Expect(h1Elements.First).ToContainTextAsync("Welcome to Tailspin Toys");
+    }
+
+    [Fact]
+    public async Task HomePageHeadingsShouldFollowLogicalHierarchy()
+    {
+        await Page.GotoAsync("/");
+        await Page.WaitForSelectorAsync("[data-testid='games-grid']", new() { Timeout = 10000 });
+
+        // h1 must exist before any h2
+        var h1 = Page.Locator("h1").First;
+        var h2 = Page.Locator("h2").First;
+        await Expect(h1).ToBeVisibleAsync();
+        await Expect(h2).ToBeVisibleAsync();
+
+        // No h3 or deeper without a preceding h2 (no skipped levels)
+        var h3Count = await Page.Locator("h3").CountAsync();
+        var h2Count = await Page.Locator("h2").CountAsync();
+        if (h3Count > 0)
+            Assert.True(h2Count > 0, "An h3 exists but no h2 precedes it — heading levels are skipped");
+    }
+
+    [Fact]
+    public async Task AboutPageShouldHaveExactlyOneH1WithCorrectContent()
+    {
+        await Page.GotoAsync("/about");
+        await Page.WaitForSelectorAsync("[data-testid='about-section']", new() { Timeout = 10000 });
+
+        // Exactly one <h1> on the about page
+        var h1Elements = Page.Locator("h1");
+        await Expect(h1Elements).ToHaveCountAsync(1);
+        await Expect(h1Elements.First).ToContainTextAsync("About Tailspin Toys");
+    }
+
+    [Fact]
+    public async Task AboutPageHeadingsShouldFollowLogicalHierarchy()
+    {
+        await Page.GotoAsync("/about");
+        await Page.WaitForSelectorAsync("[data-testid='about-section']", new() { Timeout = 10000 });
+
+        // No heading level should be skipped
+        var h2Count = await Page.Locator("h2").CountAsync();
+        var h3Count = await Page.Locator("h3").CountAsync();
+
+        if (h3Count > 0)
+            Assert.True(h2Count > 0, "An h3 exists but no h2 precedes it — heading levels are skipped");
+    }
+
+    [Fact]
+    public async Task GameDetailsPageShouldHaveExactlyOneH1WithGameTitle()
+    {
+        await Page.GotoAsync("/game/1");
+        await Page.WaitForSelectorAsync("[data-testid='game-details']", new() { Timeout = 10000 });
+
+        // Exactly one <h1> containing the game title
+        var h1Elements = Page.Locator("h1");
+        await Expect(h1Elements).ToHaveCountAsync(1);
+        await Expect(h1Elements.First).Not.ToBeEmptyAsync();
+
+        // The h1 text should match the game-details-title testid
+        var titleText = await Page.GetByTestId("game-details-title").InnerTextAsync();
+        await Expect(h1Elements.First).ToHaveTextAsync(titleText);
+    }
+
+    [Fact]
+    public async Task GameDetailsPageHeadingsShouldFollowLogicalHierarchy()
+    {
+        await Page.GotoAsync("/game/1");
+        await Page.WaitForSelectorAsync("[data-testid='game-details']", new() { Timeout = 10000 });
+
+        // h1 (game title) → h2 ("About this game") — no levels skipped
+        var h1Count = await Page.Locator("h1").CountAsync();
+        var h2Count = await Page.Locator("h2").CountAsync();
+        var h3Count = await Page.Locator("h3").CountAsync();
+
+        Assert.Equal(1, h1Count);
+        if (h3Count > 0)
+            Assert.True(h2Count > 0, "An h3 exists but no h2 precedes it — heading levels are skipped");
+    }
+
     private static ILocatorAssertions Expect(ILocator locator) => Assertions.Expect(locator);
     private static IPageAssertions Expect(IPage page) => Assertions.Expect(page);
 }
