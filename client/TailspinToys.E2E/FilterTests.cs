@@ -43,8 +43,10 @@ public class FilterTests : PlaywrightTestBase
         var firstCategoryValue = await categoryOptions[1].GetAttributeAsync("value");
         await categorySelect.SelectOptionAsync(new SelectOptionValue { Value = firstCategoryValue });
 
-        // Wait for the grid to refresh
-        await Page.WaitForSelectorAsync("[data-testid='games-grid']", new() { Timeout = 15000 });
+        // Wait for the filter to apply: the first category badge must show the selected category.
+        // This auto-retries and proves the API call completed with filtered results.
+        await Expect(Page.GetByTestId("game-category").First)
+            .ToContainTextAsync(firstCategoryText, new() { Timeout = 15000 });
 
         // Every visible category badge must match the selected category
         var categoryBadges = Page.GetByTestId("game-category");
@@ -75,8 +77,9 @@ public class FilterTests : PlaywrightTestBase
         var firstPublisherValue = await publisherOptions[1].GetAttributeAsync("value");
         await publisherSelect.SelectOptionAsync(new SelectOptionValue { Value = firstPublisherValue });
 
-        // Wait for the grid to refresh
-        await Page.WaitForSelectorAsync("[data-testid='games-grid']", new() { Timeout = 15000 });
+        // Wait for the filter to apply: the first publisher badge must show the selected publisher.
+        await Expect(Page.GetByTestId("game-publisher").First)
+            .ToContainTextAsync(firstPublisherText, new() { Timeout = 15000 });
 
         // Every visible publisher badge must match the selected publisher
         var publisherBadges = Page.GetByTestId("game-publisher");
@@ -172,17 +175,16 @@ public class FilterTests : PlaywrightTestBase
         Assert.True(categoryOptions.Count > 1, "Category dropdown must have options beyond 'All Categories'");
 
         await categorySelect.SelectOptionAsync(new SelectOptionValue { Value = await categoryOptions[1].GetAttributeAsync("value") });
-        await Page.WaitForSelectorAsync("[data-testid='games-grid']", new() { Timeout = 15000 });
+        // Wait for filter to apply — clear button appears when selectedCategoryId != 0
+        await Expect(Page.GetByTestId("filter-clear-button")).ToBeVisibleAsync(new() { Timeout = 15000 });
 
         // Click the clear button (single click — triggers single load)
         await Page.GetByTestId("filter-clear-button").ClickAsync();
 
-        // Wait for the full list to be restored
-        await Page.WaitForSelectorAsync("[data-testid='games-grid']", new() { Timeout = 15000 });
-
-        // Full count should be restored and clear button hidden
-        var restoredCount = await Page.GetByTestId("game-card").CountAsync();
-        Assert.Equal(initialCount, restoredCount);
+        // Wait for all games to be restored.
+        // WaitForSelectorAsync would return immediately (games-grid already visible), so use
+        // ToHaveCountAsync which retries until the count matches the initial unfiltered count.
+        await Expect(Page.GetByTestId("game-card")).ToHaveCountAsync(initialCount, new() { Timeout = 15000 });
         await Expect(Page.GetByTestId("filter-clear-button")).Not.ToBeVisibleAsync();
     }
 
@@ -209,14 +211,15 @@ public class FilterTests : PlaywrightTestBase
     }
 
     /// <summary>
-    /// Waits for the Blazor interactive circuit to connect and populate filter dropdown options.
-    /// The filter panel uses @rendermode InteractiveServer, so options are loaded asynchronously
-    /// after the SignalR circuit connects — waiting for games-grid alone is not sufficient.
+    /// Waits for the Blazor interactive circuit to connect and event handlers to be wired up.
+    /// <c>data-interactive="true"</c> is set by <c>OnAfterRenderAsync(firstRender: true)</c>
+    /// in GameFilterPanel, which only runs in interactive mode — NOT during SSR.
+    /// Waiting for this attribute ensures <c>@onchange</c> events are properly handled.
     /// </summary>
     private async Task WaitForFilterOptionsAsync()
     {
-        await Expect(Page.GetByTestId("filter-category").Locator("option").Nth(1))
-            .ToBeAttachedAsync(new() { Timeout = 15000 });
+        await Expect(Page.GetByTestId("game-filter-panel"))
+            .ToHaveAttributeAsync("data-interactive", "true", new() { Timeout = 15000 });
     }
 
     private static ILocatorAssertions Expect(ILocator locator) => Assertions.Expect(locator);

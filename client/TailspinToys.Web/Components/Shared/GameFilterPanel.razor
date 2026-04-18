@@ -7,7 +7,7 @@
 @inject IHttpClientFactory HttpClientFactory
 @using TailspinToys.Web.Models
 
-<div data-testid="game-filter-panel" class="flex flex-wrap gap-4 mb-6 items-end">
+<div data-testid="game-filter-panel" data-interactive="@(_isInteractive ? "true" : null)" class="flex flex-wrap gap-4 mb-6 items-end">
 
     <div class="flex flex-col gap-1">
         <label for="filter-category" class="text-sm font-medium text-slate-300">Category</label>
@@ -76,6 +76,7 @@
 
     private List<Category> categories = [];
     private List<Publisher> publishers = [];
+    private bool _isInteractive = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -109,5 +110,21 @@
         // Invoke a single combined callback so the parent can reset both IDs
         // and trigger a single re-fetch — avoids two concurrent LoadGames calls.
         await OnClearFilters.InvokeAsync();
+    }
+
+    /// <summary>
+    /// Sets data-interactive="true" on the panel container after the Blazor interactive
+    /// circuit connects. OnAfterRenderAsync(firstRender) does NOT run during SSR, so this
+    /// attribute is a reliable signal that the circuit is fully connected and event
+    /// handlers are wired up.
+    /// </summary>
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _isInteractive = true;
+            StateHasChanged();
+        }
+        return Task.CompletedTask;
     }
 }
