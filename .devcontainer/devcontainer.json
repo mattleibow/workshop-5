@@ -10,7 +10,7 @@
 		"ghcr.io/devcontainers/features/dotnet:2": {
 			"version": "10.0"
 		},
-		"ghcr.io/devcontainers/features/node:1": {},
+		"ghcr.io/devcontainers/features/node:2": {},
 		"ghcr.io/warrenbuckley/codespace-features/sqlite:1": {},
 		"ghcr.io/schlich/devcontainer-features/playwright:0": {},
 		"ghcr.io/devcontainers/features/github-cli:1": {}
